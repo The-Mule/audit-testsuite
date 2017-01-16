@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Test::More tests => 1;
+
+use File::Temp qw/ tempdir tempfile /;
+use lib '../functions.pm';
+use Functions;
+
+###
+# setup
+
+# reset audit
+system("auditctl -D >& /dev/null");
+
+# create temp directory
+my $dir = tempdir(CLEANUP => 1);
+
+# create temp file
+my ($fh, $file) = tempfile(DIR => $dir);
+
+###
+# tests
+
+# set the directory watch
+my $key = Functions::key_gen();
+system("auditctl -a always,exit -F dir=$dir -k $key");
+
+stat($file);
+
+my $result = system("ausearch -i -k $key > $stdout 2> $stderr");
+ok($result, 0);
+
+my $count = Functions::count_events($fh)
+diag "dir=$dir\n";
+diag "file=$file\n";
+diag "count=$
+# test if we generate any audit records from the watch
+# while ($line = <$fh_out>) {
+# 	# test if we generate a SYSCALL record
+# 	if ($line =~ /^type=SYSCALL /) {
+# 		if ($line =~ / syscall=open / and $line =~ / success=yes /) {
+# 			$found_syscall = 1;
+# 		}
+# 	}
+# 	if ($line =~ /^type=PATH /) {
+# 		# test if we generate a PATH(nametype=PARENT) record
+# 		if ($line =~ / name=$dir\/ / and
+# 		    $line =~ / (nametype|objtype)=PARENT /) {
+# 			$found_parent = 1;
+# 		}
+# 		# test if we generate a PATH(nametype=CREATE) record
+# 		if ($line =~ / name=$filename / and
+# 		    $line =~ / dev=$dev_fmt / and $line =~ / inode=$ino / and
+# 		    $line =~ / ouid=$uid_fmt / and
+# 		    $line =~ / ogid=$gid_fmt / and
+# 		    $line =~ / (nametype|objtype)=CREATE /) {
+# 			$found_create = 1;
+# 		}
+# 	}
+# }
+# ok($found_syscall);
+# ok($found_parent);
+# ok($found_create);
+
+# ###
+# # cleanup
+
+system("auditctl -D >& /dev/null");
+

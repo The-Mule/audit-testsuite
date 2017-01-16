@@ -24,9 +24,18 @@ my $selinux_type = $4;
 die ("These tests are intended to be run as root\n") unless $unix_user eq "root";
 die ("The auditctl tool cannot be found\n") unless which "auditctl";
 
-print "Running as   user    $unix_user\n";
-print "        with context $selinux_user:$selinux_role:$selinux_type\n";
-print "        on   system  $ENV{DISTRO}\n\n";
+my $architecture = `uname -m`;
+my $kernel_version = `uname -r`;
+my $auditd_version = `rpm --qf %{VERSION}-%{RELEASE} -q audit`;
 
+chomp($architecture);
+chomp($kernel_version);
+
+print "Running as    user    $unix_user\n";
+print "        with  context $selinux_user:$selinux_role:$selinux_type\n";
+print "        on    system  $ENV{DISTRO} ($architecture)\n";
+print "        using kernel  $kernel_version\n";
+print "              auditd  $auditd_version\n\n";
+    
 # Execute tests.
 runtests(@scripts);
