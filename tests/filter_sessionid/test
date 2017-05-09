@@ -61,6 +61,7 @@ ok($result, 0);
 my $line;
 my $syscall_msg_match = 0;
 while ($line = <$fh_out>) {
+        print STDERR $line;
 	# test if SYSCALL record matches
 	if ($line =~ m?^type=SYSCALL ? and
 	    $line =~ m? pid=$pid ? and

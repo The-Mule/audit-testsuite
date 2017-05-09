@@ -132,6 +132,7 @@ ok($result, 0);
 
 $found_msg = 0;
 while ($line = <$fh_out2>) {
+        print STDERR $line;
 	# test if we generate a SYSCALL unlink record
 	if ($line =~ /^type=SYSCALL /) {
 		if ($line =~ / syscall=unlink / ) {
